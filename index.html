@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDoアプリ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 32px;
+      width: 100%;
+      max-width: 520px;
+      height: fit-content;
+    }
+
+    /* ── 目標エリア ── */
+    .goal-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .goal-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    #goalInput {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      resize: none;
+      line-height: 1.4;
+      min-height: 60px;
+      placeholder-color: rgba(255,255,255,0.5);
+    }
+
+    #goalInput::placeholder {
+      color: rgba(255,255,255,0.45);
+    }
+
+    .goal-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 8px;
+    }
+
+    /* ── タスク入力 ── */
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 16px;
+    }
+
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #667eea;
+    }
+
+    input[type="date"] {
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      outline: none;
+      color: #4a5568;
+      transition: border-color 0.2s;
+      background: white;
+    }
+
+    input[type="date"]:focus {
+      border-color: #667eea;
+    }
+
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-label {
+      font-size: 13px;
+      color: #718096;
+      white-space: nowrap;
+    }
+
+    button.add-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    button.add-btn:hover {
+      background: #5a67d8;
+    }
+
+    /* ── フィルター ── */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: #edf2f7;
+      color: #4a5568;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: #667eea;
+      color: white;
+    }
+
+    /* ── ToDoリスト ── */
+    .todo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      transition: opacity 0.2s;
+    }
+
+    .todo-item.done {
+      opacity: 0.5;
+    }
+
+    .todo-item.overdue {
+      border-color: #feb2b2;
+      background: #fff5f5;
+    }
+
+    .todo-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #667eea;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .todo-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .todo-text {
+      font-size: 15px;
+      color: #2d3748;
+      line-height: 1.4;
+    }
+
+    .todo-item.done .todo-text {
+      text-decoration: line-through;
+      color: #a0aec0;
+    }
+
+    .todo-due {
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .todo-due.normal  { color: #718096; }
+    .todo-due.soon    { color: #d69e2e; }
+    .todo-due.overdue { color: #e53e3e; }
+    .todo-due.today   { color: #3182ce; }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #cbd5e0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: color 0.2s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover {
+      color: #fc8181;
+    }
+
+    .empty {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 14px;
+      padding: 32px 0;
+    }
+
+    .stats {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #a0aec0;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 目標エリア -->
+    <div class="goal-section">
+      <div class="goal-label">MY GOAL</div>
+      <textarea id="goalInput" rows="2" placeholder="ここに大きな目標を書こう&#10;例）バイブコーディングで月3万円稼ぐ"></textarea>
+      <div class="goal-hint">クリックして編集できます</div>
+    </div>
+
+    <h2>ToDoリスト</h2>
+
+    <!-- タスク入力 -->
+    <div class="input-area">
+      <div class="input-row">
+        <input type="text" id="todoInput" placeholder="タスクを入力..." />
+        <button class="add-btn" onclick="addTodo()">追加</button>
+      </div>
+      <div class="date-row">
+        <span class="date-label">期限：</span>
+        <input type="date" id="dueDateInput" />
+      </div>
+    </div>
+
+    <!-- フィルター -->
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('all', this)">すべて</button>
+      <button class="filter-btn" onclick="setFilter('active', this)">未完了</button>
+      <button class="filter-btn" onclick="setFilter('done', this)">完了済み</button>
+    </div>
+
+    <div class="todo-list" id="todoList"></div>
+    <p class="empty" id="emptyMsg" style="display:none;">タスクがありません</p>
+    <p class="stats" id="stats"></p>
+  </div>
+
+  <script>
+    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+    let currentFilter = 'all';
+
+    // 目標の保存・復元
+    const goalInput = document.getElementById('goalInput');
+    goalInput.value = localStorage.getItem('goal') || '';
+    goalInput.addEventListener('input', () => {
+      localStorage.setItem('goal', goalInput.value);
+    });
+
+    function save() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    }
+
+    function dueDateInfo(dateStr) {
+      if (!dateStr) return null;
+      const today = new Date(); today.setHours(0,0,0,0);
+      const due   = new Date(dateStr);
+      const diff  = Math.round((due - today) / 86400000);
+
+      if (diff < 0)  return { label: `期限切れ（${dateStr}）`, cls: 'overdue' };
+      if (diff === 0) return { label: '今日が期限',             cls: 'today'  };
+      if (diff <= 2) return { label: `あと${diff}日（${dateStr}）`, cls: 'soon' };
+      return              { label: dateStr,                    cls: 'normal' };
+    }
+
+    function render() {
+      const list     = document.getElementById('todoList');
+      const emptyMsg = document.getElementById('emptyMsg');
+      const stats    = document.getElementById('stats');
+
+      const filtered = todos.filter(t => {
+        if (currentFilter === 'active') return !t.done;
+        if (currentFilter === 'done')   return  t.done;
+        return true;
+      });
+
+      list.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyMsg.style.display = 'block';
+      } else {
+        emptyMsg.style.display = 'none';
+        filtered.forEach(todo => {
+          const info = dueDateInfo(todo.due);
+          const isOverdue = info && info.cls === 'overdue' && !todo.done;
+
+          const item = document.createElement('div');
+          item.className = 'todo-item' + (todo.done ? ' done' : '') + (isOverdue ? ' overdue' : '');
+
+          const dueHtml = info
+            ? `<span class="todo-due ${info.cls}">📅 ${info.label}</span>`
+            : '';
+
+          item.innerHTML = `
+            <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${todo.id})">
+            <div class="todo-body">
+              <span class="todo-text">${escapeHtml(todo.text)}</span>
+              ${dueHtml}
+            </div>
+            <button class="delete-btn" onclick="deleteTodo(${todo.id})">×</button>
+          `;
+          list.appendChild(item);
+        });
+      }
+
+      const doneCount = todos.filter(t => t.done).length;
+      stats.textContent = todos.length > 0 ? `${todos.length}件中 ${doneCount}件完了` : '';
+    }
+
+    function addTodo() {
+      const input   = document.getElementById('todoInput');
+      const dueDate = document.getElementById('dueDateInput');
+      const text    = input.value.trim();
+      if (!text) return;
+
+      todos.push({ id: Date.now(), text, done: false, due: dueDate.value || '' });
+      input.value    = '';
+      dueDate.value  = '';
+      save();
+      render();
+    }
+
+    function toggleTodo(id) {
+      todos = todos.map(t => t.id === id ? { ...t, done: !t.done } : t);
+      save();
+      render();
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(t => t.id !== id);
+      save();
+      render();
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    document.getElementById('todoInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addTodo();
+    });
+
+    render();
+  </script>
+</body>
+</html>
