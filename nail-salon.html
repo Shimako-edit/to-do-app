@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nail Salon Lune</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:   #f4a7b9;
+      --rose:   #e8758a;
+      --dark:   #3a2a2e;
+      --light:  #fff8f9;
+      --gray:   #7a6870;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: var(--light);
+    }
+
+    /* ── ヘッダー ── */
+    header {
+      background: white;
+      border-bottom: 1px solid #f0e0e5;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--rose);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--gray);
+      font-size: 14px;
+      margin-left: 24px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--rose); }
+
+    /* ── ヒーロー ── */
+    .hero {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .hero p.en {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--rose);
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .hero p.sub {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 32px;
+      line-height: 1.8;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--rose);
+      color: white;
+      padding: 14px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { background: #d4607a; transform: translateY(-1px); }
+
+    /* ── セクション共通 ── */
+    section { padding: 64px 24px; }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title p {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--rose);
+      margin-bottom: 8px;
+    }
+
+    .section-title h2 {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+    }
+
+    /* ── メニュー ── */
+    .menu { background: white; }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .menu-card {
+      border: 1px solid #f0e0e5;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      transition: box-shadow 0.2s;
+    }
+
+    .menu-card:hover { box-shadow: 0 4px 20px rgba(232,117,138,0.15); }
+
+    .menu-card .icon { font-size: 32px; margin-bottom: 12px; }
+
+    .menu-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .menu-card p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .menu-card .price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--rose);
+    }
+
+    /* ── ギャラリー ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      gap: 8px;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .gallery-item.hidden {
+      display: none;
+    }
+
+    .gallery-tag {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.7);
+      color: var(--rose);
+      padding: 2px 10px;
+      border-radius: 50px;
+    }
+
+    .gallery-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .gallery-filter-btn {
+      border: 2px solid #f0e0e5;
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      background: white;
+      color: var(--gray);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .gallery-filter-btn.active {
+      background: var(--rose);
+      border-color: var(--rose);
+      color: white;
+    }
+
+    /* ── アクセス ── */
+    .access { background: white; }
+
+    .access-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .access-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .access-row {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .access-row .label {
+      color: var(--rose);
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+
+    /* ── 予約フォーム ── */
+    .booking { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%); }
+
+    .form-wrap {
+      background: white;
+      border-radius: 20px;
+      padding: 36px;
+      max-width: 520px;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(232,117,138,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+
+    label .required {
+      color: var(--rose);
+      margin-left: 4px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+      width: 100%;
+      border: 2px solid #f0e0e5;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: white;
+      color: var(--dark);
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--rose);
+    }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--rose);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover { background: #d4607a; transform: translateY(-1px); }
+
+    /* 送信完了メッセージ */
+    .success {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .success .check { font-size: 48px; margin-bottom: 12px; }
+    .success h3 { font-size: 20px; margin-bottom: 8px; }
+    .success p { font-size: 14px; color: var(--gray); }
+
+    /* ── フッター ── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 13px;
+    }
+
+    footer .logo { color: var(--pink); margin-bottom: 8px; display: block; }
+
+    /* ── スマホ対応 ── */
+    @media (max-width: 600px) {
+      nav { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-wrap { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="logo">Nail Salon Lune</div>
+    <nav>
+      <a href="#menu">メニュー</a>
+      <a href="#gallery">ギャラリー</a>
+      <a href="#access">アクセス</a>
+      <a href="#booking">予約</a>
+    </nav>
+  </header>
+
+  <!-- ヒーロー -->
+  <div class="hero" style="background-image: url('neiru2.jpg'); background-size: cover; background-position: center; position: relative;">
+    <div style="position: absolute; inset: 0; background: rgba(255,220,230,0.78);"></div>
+    <div style="position: relative; z-index: 1;">
+      <p class="en">NAIL SALON LUNE</p>
+      <h1>あなたの指先を<br>もっと美しく</h1>
+      <p class="sub">丁寧な施術と居心地のよい空間で<br>日常に小さな贅沢を。</p>
+      <a href="#booking" class="btn">今すぐ予約する</a>
+    </div>
+  </div>
+
+  <!-- メニュー -->
+  <section class="menu" id="menu">
+    <div class="section-title">
+      <p>MENU</p>
+      <h2>メニュー・料金</h2>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="icon">💅</div>
+        <h3>ワンカラー</h3>
+        <p>シンプルで上品な単色ネイル。オフィスにも◎</p>
+        <div class="price">¥4,500〜</div>
+      </div>
+      <div class="menu-card">
+        <div class="icon">✨</div>
+        <h3>アートネイル</h3>
+        <p>フラワー・マーブルなどデザインは自由に相談</p>
+        <div class="price">¥7,000〜</div>
+      </div>
+      <div class="menu-card">
+        <div class="icon">🌸</div>
+        <h3>フットネイル</h3>
+        <p>足元からおしゃれを。サンダルの季節に人気</p>
+        <div class="price">¥5,500〜</div>
+      </div>
+      <div class="menu-card">
+        <div class="icon">💎</div>
+        <h3>ジェルオフ</h3>
+        <p>他店ジェルも対応。丁寧なオフで爪を守ります</p>
+        <div class="price">¥2,000〜</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ギャラリー -->
+  <section id="gallery">
+    <div class="section-title">
+      <p>GALLERY</p>
+      <h2>施術例</h2>
+    </div>
+    <div class="gallery-filters">
+      <button class="gallery-filter-btn active" onclick="filterGallery('all', this)">すべて</button>
+      <button class="gallery-filter-btn" onclick="filterGallery('ワンカラー', this)">ワンカラー</button>
+      <button class="gallery-filter-btn" onclick="filterGallery('アートネイル', this)">アートネイル</button>
+      <button class="gallery-filter-btn" onclick="filterGallery('フットネイル', this)">フットネイル</button>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item" data-tag="ワンカラー">🌸<span class="gallery-tag">ワンカラー</span></div>
+      <div class="gallery-item" data-tag="ワンカラー">💅<span class="gallery-tag">ワンカラー</span></div>
+      <div class="gallery-item" data-tag="アートネイル">✨<span class="gallery-tag">アートネイル</span></div>
+      <div class="gallery-item" data-tag="アートネイル">🦋<span class="gallery-tag">アートネイル</span></div>
+      <div class="gallery-item" data-tag="フットネイル">🌿<span class="gallery-tag">フットネイル</span></div>
+      <div class="gallery-item" data-tag="フットネイル">💐<span class="gallery-tag">フットネイル</span></div>
+    </div>
+  </section>
+
+  <!-- アクセス -->
+  <section class="access" id="access">
+    <div class="section-title">
+      <p>ACCESS</p>
+      <h2>アクセス</h2>
+    </div>
+    <div class="access-inner">
+      <div class="access-info">
+        <div class="access-row">
+          <span class="label">住所</span>
+          <span>東京都渋谷区〇〇町1-2-3 ルネビル2F</span>
+        </div>
+        <div class="access-row">
+          <span class="label">最寄り</span>
+          <span>渋谷駅 徒歩5分</span>
+        </div>
+        <div class="access-row">
+          <span class="label">営業時間</span>
+          <span>10:00〜20:00（最終受付 19:00）</span>
+        </div>
+        <div class="access-row">
+          <span class="label">定休日</span>
+          <span>毎週火曜日</span>
+        </div>
+        <div class="access-row">
+          <span class="label">TEL</span>
+          <span>03-XXXX-XXXX</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 予約フォーム -->
+  <section class="booking" id="booking">
+    <div class="section-title">
+      <p>RESERVATION</p>
+      <h2>ご予約</h2>
+    </div>
+    <div class="form-wrap">
+      <form id="bookingForm">
+        <div class="form-group">
+          <label>お名前<span class="required">*</span></label>
+          <input type="text" placeholder="山田 花子" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>電話番号<span class="required">*</span></label>
+            <input type="tel" placeholder="090-0000-0000" required />
+          </div>
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" placeholder="example@mail.com" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>ご希望メニュー<span class="required">*</span></label>
+          <select required>
+            <option value="">選択してください</option>
+            <option>ワンカラー（¥4,500〜）</option>
+            <option>アートネイル（¥7,000〜）</option>
+            <option>フットネイル（¥5,500〜）</option>
+            <option>ジェルオフ（¥2,000〜）</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>ご希望日<span class="required">*</span></label>
+            <input type="date" required />
+          </div>
+          <div class="form-group">
+            <label>ご希望時間<span class="required">*</span></label>
+            <select required>
+              <option value="">選択してください</option>
+              <option>10:00</option>
+              <option>10:30</option>
+              <option>11:00</option>
+              <option>11:30</option>
+              <option>12:00</option>
+              <option>12:30</option>
+              <option>13:00</option>
+              <option>13:30</option>
+              <option>14:00</option>
+              <option>14:30</option>
+              <option>15:00</option>
+              <option>15:30</option>
+              <option>16:00</option>
+              <option>16:30</option>
+              <option>17:00</option>
+              <option>17:30</option>
+              <option>18:00</option>
+              <option>18:30</option>
+              <option>19:00</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>ご要望・ご質問</label>
+          <textarea placeholder="デザインの希望やアレルギーなどあればご記入ください"></textarea>
+        </div>
+        <p style="font-size:13px; color:#7a6870; line-height:1.8; margin-bottom:16px; padding:12px 14px; background:#fff8f9; border-radius:10px; border:1px solid #f0e0e5;">
+          ご希望の日時を確認後、担当者よりお電話またはメールにてご連絡いたします。<br>
+          確定まで少々お時間をいただく場合がございます。
+        </p>
+        <button type="submit" class="submit-btn">予約を送信する</button>
+      </form>
+
+      <div class="success" id="successMsg">
+        <div class="check">💌</div>
+        <h3>ご予約を受け付けました</h3>
+        <p>確認のご連絡を差し上げます。<br>しばらくお待ちください。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <span class="logo">Nail Salon Lune</span>
+    <p>© 2025 Nail Salon Lune. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function filterGallery(tag, btn) {
+      document.querySelectorAll('.gallery-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        if (tag === 'all' || item.dataset.tag === tag) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      this.style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    });
+
+    // ナビリンクのスムーズスクロール
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
